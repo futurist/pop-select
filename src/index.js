@@ -1,9 +1,9 @@
-var container = document.body
 function invalidSelect (el) {
   return !el || el.tagName !== 'SELECT' || el.multiple
 }
-function popSelect (el) {
+function popSelect (el, container) {
   if (invalidSelect(el)) return
+  container = container || document.body
   const {length} = el.options
   const pop = el.cloneNode(true)
   const {top, left} = getPosition(el)
@@ -66,15 +66,15 @@ function triggerChange (el) {
   }
 }
 
-function applySelect (el) {
+function applySelect (el, container) {
   if (invalidSelect(el) || el.hasPopSelect) return
   el.addEventListener('mousedown', e => {
     e.preventDefault()
-    popSelect(el)
+    popSelect(el, container)
   })
   el.addEventListener('keydown', e => {
     if ([13, 32, 38, 40].indexOf(e.keyCode) > -1) {
-      popSelect(el)
+      popSelect(el, container)
     }
     e.preventDefault()
   })
