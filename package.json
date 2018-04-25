@@ -1,0 +1,9 @@
+{
+  "name": "pop-select",
+  "version": "1.0.0",
+  "description": "Popup select box, for playback",
+  "main": "dist/index.js",
+  "repository": "https://github.com/futurist/pop-select",
+  "author": "futurist <jamesyang999@gmail.com>",
+  "license": "MIT"
+}
