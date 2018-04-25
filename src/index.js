@@ -23,13 +23,15 @@ function popSelect (el, container) {
       triggerChange(el)
     }
   }
-  pop.onclick = pop.onchange = pop.onblur = e => {
+  pop.onclick = pop.onchange = e => {
     if (isKeyDown && e.type == 'change') return
     removeSelect()
   }
-  pop.onblur = e => {
-    removeSelect(true)
-  }
+  setTimeout(()=>{
+    pop.onblur = e => {
+      removeSelect(true)
+    }
+  })
   pop.onkeydown = e => {
     if (e.keyCode == 27) { // esc
       setTimeout(() => removeSelect(true))
