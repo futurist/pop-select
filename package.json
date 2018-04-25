@@ -1,5 +1,5 @@
 {
-  "name": "pop-select",
+  "name": "popup-select",
   "version": "1.0.0",
   "description": "Popup select box, for playback",
   "main": "src/index.js",
