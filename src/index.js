@@ -1,57 +1,45 @@
-function initMutate () {
-  var observer = new MutationObserver((mutationsList) => {
-    Array.from(mutationsList).forEach(mutation => {
-      if (mutation.type == 'childList') {
-        // console.log(mutation, 'A child node has been added or removed.')
-        Array.from(mutation.addedNodes)
-      }
-    })
-  })
-  observer.observe(document.body, {subtree: true, childList: true})
-}
-
 var container = document.body
-function invalidSelect(el){
+function invalidSelect (el) {
   return !el || el.tagName !== 'SELECT' || el.multiple
 }
 function popSelect (el) {
-  if(invalidSelect(el)) return
+  if (invalidSelect(el)) return
   const {length} = el.options
   const pop = el.cloneNode(true)
   const {top, left} = getPosition(el)
   let isKeyDown = false
   pop.style = `position:absolute; left:${left}px; top:${top}px;`
   pop.size = length
-  pop.tabIndex=0
+  pop.tabIndex = 0
   pop.selectedIndex = el.selectedIndex
-  const removeSelect = (isEscape)=>{
-    if(pop.isRemoved) return
+  const removeSelect = (isEscape) => {
+    if (pop.isRemoved) return
     const {selectedIndex} = pop
     pop.isRemoved = true
-    pop.remove()  // this will trigger onblur!!
+    pop.remove() // this will trigger onblur!!
     el.focus()
-    if(selectedIndex!=el.selectedIndex && !isEscape){
+    if (selectedIndex != el.selectedIndex && !isEscape) {
       el.selectedIndex = selectedIndex
       triggerChange(el)
     }
   }
-  pop.onclick = pop.onchange = pop.onblur = e=>{
-    if(isKeyDown && e.type=='change') return
+  pop.onclick = pop.onchange = pop.onblur = e => {
+    if (isKeyDown && e.type == 'change') return
     removeSelect()
   }
-  pop.onblur = e=>{
+  pop.onblur = e => {
     removeSelect(true)
   }
-  pop.onkeydown = e=>{
-    if(e.keyCode==27){  // esc
-      setTimeout(()=>removeSelect(true))
+  pop.onkeydown = e => {
+    if (e.keyCode == 27) { // esc
+      setTimeout(() => removeSelect(true))
     }
-    else if([13,32].indexOf(e.keyCode)>-1) {  // space
+    else if ([13, 32].indexOf(e.keyCode) > -1) { // space
       setTimeout(removeSelect)
     }
     isKeyDown = true
   }
-  pop.onkeyup = e=>{
+  pop.onkeyup = e => {
     isKeyDown = false
   }
   container.appendChild(pop)
@@ -78,14 +66,14 @@ function triggerChange (el) {
   }
 }
 
-function applySelect(el){
-  if(invalidSelect(el) || el.hasPopSelect) return
-  el.addEventListener('mousedown', e=>{
+function applySelect (el) {
+  if (invalidSelect(el) || el.hasPopSelect) return
+  el.addEventListener('mousedown', e => {
     e.preventDefault()
     popSelect(el)
   })
-  el.addEventListener('keydown', e=>{
-    if([13,32,38,40].indexOf(e.keyCode)>-1) {
+  el.addEventListener('keydown', e => {
+    if ([13, 32, 38, 40].indexOf(e.keyCode) > -1) {
       popSelect(el)
     }
     e.preventDefault()
@@ -93,3 +81,8 @@ function applySelect(el){
   el.hasPopSelect = true
 }
 
+module.exports = {
+  applySelect,
+  popSelect,
+  getPosition
+}
