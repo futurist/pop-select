@@ -1,7 +1,7 @@
 function invalidSelect (el) {
   return !el || el.tagName !== 'SELECT' || el.multiple
 }
-function popSelect (el, container) {
+function popSelect (el, {container, oncreate, onselect}={}) {
   if (invalidSelect(el)) return
   container = container || document.body
   const {length} = el.options
@@ -14,6 +14,7 @@ function popSelect (el, container) {
   pop.selectedIndex = el.selectedIndex
   const removeSelect = (isEscape) => {
     if (pop.isRemoved) return
+    if(onselect && onselect(pop, isEscape)===false) return
     const {selectedIndex} = pop
     pop.isRemoved = true
     pop.remove() // this will trigger onblur!!
@@ -46,6 +47,8 @@ function popSelect (el, container) {
   }
   container.appendChild(pop)
   pop.focus()
+  oncreate && oncreate(pop)
+  return pop
 }
 
 function getPosition (elem) {
@@ -68,19 +71,18 @@ function triggerChange (el) {
   }
 }
 
-function applySelect (el, container) {
-  if (invalidSelect(el) || el.hasPopSelect) return
+function applySelect (el, config) {
+  if (invalidSelect(el) || el.popSelect) return
   el.addEventListener('mousedown', e => {
     e.preventDefault()
-    popSelect(el, container)
+    el.popSelect = popSelect(el, config)
   })
   el.addEventListener('keydown', e => {
     if ([13, 32, 38, 40].indexOf(e.keyCode) > -1) {
-      popSelect(el, container)
+      el.popSelect = popSelect(el, config)
     }
     e.preventDefault()
   })
-  el.hasPopSelect = true
 }
 
 module.exports = {
